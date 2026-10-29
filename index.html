@@ -7,9 +7,6 @@
     <style>
         :root {
             --wii-blue: #00c3ff;
-            --wii-blue-glow: rgba(0, 195, 255, 0.65);
-            --bg-stripe-1: #e8ecef;
-            --bg-stripe-2: #dfe4e8;
         }
 
         * {
@@ -24,13 +21,8 @@
             height: 100vh;
             overflow: hidden;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: repeating-linear-gradient(
-                0deg,
-                var(--bg-stripe-1),
-                var(--bg-stripe-1) 6px,
-                var(--bg-stripe-2) 6px,
-                var(--bg-stripe-2) 12px
-            );
+            /* Fond uni léger pour soulager le processeur de la TV */
+            background-color: #e4e9ed;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -55,20 +47,17 @@
             height: 72vh;
         }
 
-        /* Style d'une chaîne Wii */
+        /* Style d'une chaîne Wii optimisé GPU (Zéro lag) */
         .channel {
             position: relative;
-            border-radius: 26px;
+            border-radius: 24px;
             background: #ffffff;
             border: 4px solid #b8c4cc;
-            box-shadow: 
-                0 6px 15px rgba(0, 0, 0, 0.1),
-                inset 0 0 15px rgba(255, 255, 255, 0.8);
             overflow: hidden;
             cursor: pointer;
-            transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
-                        border-color 0.2s ease,
-                        box-shadow 0.25s ease;
+            transform: translate3d(0, 0, 0);
+            will-change: transform;
+            transition: transform 0.14s ease-out, border-color 0.14s ease-out;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -76,54 +65,41 @@
             outline: none;
         }
 
-        /* Reflet glossy supérieur type Wii */
+        /* Reflet supérieur simplifié sans calcul lourd */
         .channel::before {
             content: "";
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
-            height: 48%;
-            background: linear-gradient(
-                180deg,
-                rgba(255, 255, 255, 0.45) 0%,
-                rgba(255, 255, 255, 0.04) 100%
-            );
-            border-radius: 22px 22px 60% 60% / 22px 22px 25% 25%;
+            height: 45%;
+            background: rgba(255, 255, 255, 0.22);
+            border-radius: 20px 20px 50% 50% / 20px 20px 20% 20%;
             z-index: 4;
             pointer-events: none;
         }
 
-        /* État sélectionné (Télécommande ou Souris) */
+        /* État sélectionné ultra-réactif */
         .channel.focused,
-        .channel:hover {
-            transform: scale(1.08);
+        .channel:hover,
+        .channel:focus {
+            transform: translate3d(0, 0, 0) scale(1.07);
             border-color: var(--wii-blue);
-            box-shadow: 
-                0 14px 28px rgba(0, 0, 0, 0.25),
-                0 0 22px var(--wii-blue-glow),
-                inset 0 0 12px rgba(255, 255, 255, 0.9);
+            border-width: 6px;
             z-index: 10;
         }
 
         /* Animation de lancement */
         .channel.launching {
-            transform: scale(1.25);
-            filter: brightness(1.3);
-            transition: all 0.35s ease-in;
+            transform: translate3d(0, 0, 0) scale(1.18);
+            opacity: 0.85;
+            transition: transform 0.2s ease-in, opacity 0.2s ease-in;
         }
 
-        /* Contenu interne des chaînes actives */
         .channel-bg {
             position: absolute;
             inset: 0;
             z-index: 1;
-            transition: transform 0.5s ease;
-        }
-
-        .channel.focused .channel-bg,
-        .channel:hover .channel-bg {
-            transform: scale(1.1);
         }
 
         .channel-content {
@@ -139,7 +115,7 @@
             padding: 10px 18px;
         }
 
-        /* Logos principaux agrandis et verrouillés */
+        /* Logos principaux sans drop-shadow (gain massif de FPS sur TV) */
         .channel-icon {
             width: 112px;
             height: 112px;
@@ -149,23 +125,13 @@
             display: block;
             object-fit: contain;
             overflow: visible;
-            filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.3));
-            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        .channel.focused .channel-icon,
-        .channel:hover .channel-icon {
-            transform: scale(1.14) rotate(-2deg);
-        }
-
-        /* Style de base pour les images de noms de chaînes */
         .channel-logo-name {
             height: 44px;
             max-width: 80%;
             flex-shrink: 0;
             object-fit: contain;
-            filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.35));
-            transition: transform 0.25s ease;
         }
 
         /* Image Twitch_Logo-removebg-preview.png doublée */
@@ -189,46 +155,27 @@
             max-width: none;
             margin-top: -12px;
             margin-bottom: -14px;
-            filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.15));
         }
 
-        .channel.focused .channel-logo-name,
-        .channel:hover .channel-logo-name {
-            transform: translateY(-2px) scale(1.08);
-        }
-
-        /* Texte sans contour ni boîte autour (YouTube, Spotify) */
+        /* Texte sans contour ni boîte autour */
         .channel-label {
             background: transparent;
             border: none;
-            box-shadow: none;
-            -webkit-text-stroke: 0;
             color: #ffffff;
             font-weight: 800;
             font-size: 1.35rem;
             letter-spacing: 0.6px;
-            text-shadow: none;
             flex-shrink: 0;
-            transition: transform 0.25s ease, opacity 0.25s ease;
         }
 
-        .channel.focused .channel-label,
-        .channel:hover .channel-label {
-            transform: translateY(-2px) scale(1.05);
-        }
-
-        /* Thèmes par application */
-        .bg-youtube { background: radial-gradient(circle at center, #ff3b3b 0%, #990000 100%); }
-        .bg-spotify { background: radial-gradient(circle at center, #1ed760 0%, #0a5221 100%); }
-        .bg-twitch  { background: radial-gradient(circle at center, #a970ff 0%, #4b149e 100%); }
-        .bg-google  { background: radial-gradient(circle at center, #ffffff 0%, #dce3ea 100%); }
-        .bg-anime   { background: linear-gradient(135deg, #0f172a 0%, #3b0764 50%, #be123c 100%); }
-        .bg-netflix { background: radial-gradient(circle at center, #1f1f1f 0%, #000000 100%); }
-
-        /* Chaîne Disney+ */
-        .bg-disney {
-            background: radial-gradient(circle at 50% 52%, #172d6e 0%, #0a1438 58%, #040717 100%);
-        }
+        /* Couleurs franches et légères pour la TV */
+        .bg-youtube { background: linear-gradient(180deg, #ff3030 0%, #a30000 100%); }
+        .bg-spotify { background: linear-gradient(180deg, #1ed760 0%, #0b5e26 100%); }
+        .bg-twitch  { background: linear-gradient(180deg, #9d5cff 0%, #4b149e 100%); }
+        .bg-google  { background: #f4f7fa; }
+        .bg-anime   { background: linear-gradient(135deg, #111827 0%, #4c1d95 55%, #be123c 100%); }
+        .bg-netflix { background: #0f0f0f; }
+        .bg-disney  { background: #0a1438; }
 
         .disney-img {
             position: absolute;
@@ -237,46 +184,25 @@
             height: 100%;
             object-fit: cover;
             z-index: 2;
-            transition: transform 0.5s ease;
         }
 
-        .channel.focused .disney-img,
-        .channel:hover .disney-img {
-            transform: scale(1.08);
-        }
-
-        /* Logo Netflix avec marge élargie à droite pour ne jamais couper le X */
         .netflix-logo {
             width: 86%;
             max-width: 260px;
             height: auto;
             overflow: visible;
-            filter: drop-shadow(0 6px 14px rgba(229, 9, 20, 0.45));
-            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        .channel.focused .netflix-logo,
-        .channel:hover .netflix-logo {
-            transform: scale(1.12);
-        }
-
-        /* Chaînes vides (Effet Wii gris/statique) */
+        /* Chaînes vides optimisées (sans repeating-gradient lourd) */
         .channel.empty {
-            background: repeating-linear-gradient(
-                45deg,
-                #d6dce0,
-                #d6dce0 8px,
-                #cdd4d9 8px,
-                #cdd4d9 16px
-            );
-            border-color: #c2ccd4;
-            opacity: 0.78;
+            background-color: #d2d9df;
+            border-color: #bfc8d0;
         }
 
         .channel.empty .wii-watermark {
             font-size: 2rem;
             font-weight: 800;
-            color: rgba(150, 165, 175, 0.45);
+            color: #adb8c2;
             letter-spacing: 2px;
             z-index: 2;
         }
@@ -290,26 +216,30 @@
             align-items: center;
             justify-content: space-between;
             padding: 0 5vw;
-            background: linear-gradient(180deg, #dde4e9 0%, #c4cfd6 100%);
+            background: #cfd8df;
             border-top: 4px solid var(--wii-blue);
-            box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.08);
-            border-radius: 50% 50% 0 0 / 28px 28px 0 0;
+            border-radius: 50% 50% 0 0 / 24px 24px 0 0;
         }
 
         .wii-pill-btn {
             width: 90px;
             height: 90px;
             border-radius: 50%;
-            background: linear-gradient(180deg, #ffffff 0%, #d8e0e5 100%);
+            background: #f5f7f9;
             border: 3px solid #a3b2bd;
-            box-shadow: 0 5px 12px rgba(0,0,0,0.15), inset 0 2px 5px #fff;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 800;
-            font-size: 1.4rem;
-            color: #6c7a86;
-            letter-spacing: 1px;
+            font-size: 1.3rem;
+            color: #5c6a76;
+            cursor: pointer;
+        }
+
+        .wii-pill-btn:hover,
+        .wii-pill-btn.focused {
+            border-color: var(--wii-blue);
+            border-width: 5px;
         }
 
         .wii-clock-container {
@@ -324,7 +254,6 @@
             font-weight: 700;
             color: #55626d;
             letter-spacing: 4px;
-            text-shadow: 0 2px 0 #ffffff;
             font-variant-numeric: tabular-nums;
         }
 
@@ -333,16 +262,6 @@
             font-weight: 600;
             color: #687682;
             margin-top: -4px;
-            text-transform: capitalize;
-        }
-
-        .colon {
-            animation: blink 1s infinite;
-        }
-
-        @keyframes blink {
-            0%, 49% { opacity: 1; }
-            50%, 100% { opacity: 0.2; }
         }
     </style>
 </head>
@@ -353,7 +272,7 @@
         <div class="channels-grid" id="grid">
             
             <!-- 1. YOUTUBE -->
-            <div class="channel active-app focused" data-index="0" data-url="https://www.youtube.com">
+            <div class="channel active-app focused" tabindex="0" data-index="0" data-url="https://www.youtube.com">
                 <div class="channel-bg bg-youtube"></div>
                 <div class="channel-content">
                     <svg class="channel-icon" xmlns="http://www.w3.org/2000/svg" width="112" height="112" viewBox="0 0 24 24" fill="#ffffff">
@@ -365,7 +284,7 @@
             </div>
 
             <!-- 2. SPOTIFY -->
-            <div class="channel active-app" data-index="1" data-url="https://open.spotify.com">
+            <div class="channel active-app" tabindex="0" data-index="1" data-url="https://open.spotify.com">
                 <div class="channel-bg bg-spotify"></div>
                 <div class="channel-content">
                     <svg class="channel-icon" xmlns="http://www.w3.org/2000/svg" width="112" height="112" viewBox="0 0 24 24" fill="#ffffff">
@@ -376,8 +295,8 @@
                 </div>
             </div>
 
-            <!-- 3. TWITCH (Image Twitch_Logo-removebg-preview.png doublée) -->
-            <div class="channel active-app" data-index="2" data-url="https://www.twitch.tv">
+            <!-- 3. TWITCH -->
+            <div class="channel active-app" tabindex="0" data-index="2" data-url="https://www.twitch.tv">
                 <div class="channel-bg bg-twitch"></div>
                 <div class="channel-content">
                     <svg class="channel-icon" xmlns="http://www.w3.org/2000/svg" width="112" height="112" viewBox="0 0 24 24" fill="#ffffff">
@@ -388,7 +307,7 @@
             </div>
 
             <!-- 4. ANIME-SAMA -->
-            <div class="channel active-app" data-index="3" data-url="https://anime-sama.to">
+            <div class="channel active-app" tabindex="0" data-index="3" data-url="https://anime-sama.to">
                 <div class="channel-bg bg-anime"></div>
                 <div class="channel-content">
                     <img class="channel-icon" src="61pfGOfxjmL.png" alt="Anime-Sama Icon">
@@ -396,8 +315,8 @@
                 </div>
             </div>
 
-            <!-- 5. GOOGLE (Avec Google_logo.png et Google-logo-text.png doublé) -->
-            <div class="channel active-app" data-index="4" data-url="https://www.google.fr">
+            <!-- 5. GOOGLE -->
+            <div class="channel active-app" tabindex="0" data-index="4" data-url="https://www.google.fr">
                 <div class="channel-bg bg-google"></div>
                 <div class="channel-content">
                     <img class="channel-icon" src="Google_logo.png" alt="Google Icon">
@@ -406,13 +325,13 @@
             </div>
 
             <!-- 6. DISNEY+ -->
-            <div class="channel active-app" data-index="5" data-url="https://www.disneyplus.com">
+            <div class="channel active-app" tabindex="0" data-index="5" data-url="https://www.disneyplus.com">
                 <div class="channel-bg bg-disney"></div>
                 <img class="disney-img" src="disney.png" alt="Disney+" onerror="if(this.src.endsWith('disney.png')) this.src='disney.jpg';">
             </div>
 
             <!-- 7. NETFLIX -->
-            <div class="channel active-app" data-index="6" data-url="https://www.netflix.com">
+            <div class="channel active-app" tabindex="0" data-index="6" data-url="https://www.netflix.com">
                 <div class="channel-bg bg-netflix"></div>
                 <div class="channel-content">
                     <svg class="netflix-logo" xmlns="http://www.w3.org/2000/svg" viewBox="-20 -15 600 160" fill="#E50914">
@@ -427,28 +346,28 @@
                 </div>
             </div>
 
-            <!-- 8 à 12 : CHAÎNES VIDES POUR LE LOOK WII -->
-            <div class="channel empty" data-index="7"><span class="wii-watermark">Wii</span></div>
-            <div class="channel empty" data-index="8"><span class="wii-watermark">Wii</span></div>
-            <div class="channel empty" data-index="9"><span class="wii-watermark">Wii</span></div>
-            <div class="channel empty" data-index="10"><span class="wii-watermark">Wii</span></div>
-            <div class="channel empty" data-index="11"><span class="wii-watermark">Wii</span></div>
+            <!-- 8 à 12 : CHAÎNES VIDES -->
+            <div class="channel empty" tabindex="0" data-index="7"><span class="wii-watermark">Wii</span></div>
+            <div class="channel empty" tabindex="0" data-index="8"><span class="wii-watermark">Wii</span></div>
+            <div class="channel empty" tabindex="0" data-index="9"><span class="wii-watermark">Wii</span></div>
+            <div class="channel empty" tabindex="0" data-index="10"><span class="wii-watermark">Wii</span></div>
+            <div class="channel empty" tabindex="0" data-index="11"><span class="wii-watermark">Wii</span></div>
 
         </div>
     </div>
 
     <!-- BARRE INFÉRIEURE WII -->
     <div class="wii-bottom-bar">
-        <div class="wii-pill-btn">Wii</div>
+        <div class="wii-pill-btn" id="wiiBtn">Wii</div>
         <div class="wii-clock-container">
-            <div class="wii-time" id="clock">12<span class="colon">:</span>00</div>
-            <div class="wii-date" id="date">Mer 28/10</div>
+            <div class="wii-time" id="clock">12:00</div>
+            <div class="wii-date" id="date">Jeu 29/10</div>
         </div>
-        <div class="wii-pill-btn">TV</div>
+        <div class="wii-pill-btn" id="installBtn" title="Installer sur VIDAA">TV</div>
     </div>
 
     <script>
-        // --- 1. SYNTHÉTISEUR AUDIO WII (Web Audio API) ---
+        // --- 1. SYNTHÉTISEUR AUDIO WII ---
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
         let audioCtx = null;
 
@@ -465,30 +384,30 @@
                 const now = audioCtx.currentTime;
                 if (type === 'hover') {
                     osc.type = 'sine';
-                    osc.frequency.setValueAtTime(520, now);
-                    osc.frequency.exponentialRampToValueAtTime(780, now + 0.065);
-                    gain.gain.setValueAtTime(0.12, now);
-                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
+                    osc.frequency.setValueAtTime(540, now);
+                    osc.frequency.exponentialRampToValueAtTime(780, now + 0.05);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.055);
                     osc.start(now);
-                    osc.stop(now + 0.07);
+                    osc.stop(now + 0.055);
                 } else if (type === 'select') {
                     osc.type = 'triangle';
                     osc.frequency.setValueAtTime(587.33, now);
-                    osc.frequency.setValueAtTime(880, now + 0.08);
-                    gain.gain.setValueAtTime(0.22, now);
-                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+                    osc.frequency.setValueAtTime(880, now + 0.07);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
                     osc.start(now);
-                    osc.stop(now + 0.35);
+                    osc.stop(now + 0.3);
                 }
             } catch (e) {}
         }
 
-        // --- 2. HORLOGE & DATE EN TEMPS RÉEL ---
+        // --- 2. HORLOGE LÉGÈRE (Mise à jour toutes les 10s au lieu de 1s pour économiser le CPU TV) ---
         function updateClock() {
             const now = new Date();
             const hours = String(now.getHours()).padStart(2, '0');
             const minutes = String(now.getMinutes()).padStart(2, '0');
-            document.getElementById('clock').innerHTML = `${hours}<span class="colon">:</span>${minutes}`;
+            document.getElementById('clock').textContent = `${hours}:${minutes}`;
 
             const days = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
             const dayName = days[now.getDay()];
@@ -496,10 +415,10 @@
             const monthNum = String(now.getMonth() + 1).padStart(2, '0');
             document.getElementById('date').textContent = `${dayName} ${dayNum}/${monthNum}`;
         }
-        setInterval(updateClock, 1000);
+        setInterval(updateClock, 10000);
         updateClock();
 
-        // --- 3. NAVIGATION TÉLÉCOMMANDE (D-PAD) & SOURIS ---
+        // --- 3. NAVIGATION TÉLÉCOMMANDE TV & SOURIS ---
         const channels = Array.from(document.querySelectorAll('.channel'));
         let currentIndex = 0;
         const COLS = 4;
@@ -509,6 +428,7 @@
             channels[currentIndex].classList.remove('focused');
             currentIndex = index;
             channels[currentIndex].classList.add('focused');
+            channels[currentIndex].focus({ preventScroll: true });
             playWiiSound('hover');
         }
 
@@ -519,7 +439,7 @@
             channelEl.classList.add('launching');
             setTimeout(() => {
                 window.location.href = url;
-            }, 280);
+            }, 180);
         }
 
         channels.forEach((ch, idx) => {
@@ -532,25 +452,41 @@
             });
         });
 
+        // Support complet des codes touches télécommande Hisense / VIDAA / CE-HTML
         window.addEventListener('keydown', (e) => {
             const key = e.key;
-            const code = e.keyCode;
+            const code = e.keyCode || e.which;
 
-            if (key === 'ArrowRight' || code === 39) {
+            if (key === 'ArrowRight' || code === 39 || code === 4) {
                 e.preventDefault();
                 if (currentIndex < channels.length - 1) setFocus(currentIndex + 1);
-            } else if (key === 'ArrowLeft' || code === 37) {
+            } else if (key === 'ArrowLeft' || code === 37 || code === 3) {
                 e.preventDefault();
                 if (currentIndex > 0) setFocus(currentIndex - 1);
-            } else if (key === 'ArrowDown' || code === 40) {
+            } else if (key === 'ArrowDown' || code === 40 || code === 2) {
                 e.preventDefault();
                 if (currentIndex + COLS < channels.length) setFocus(currentIndex + COLS);
-            } else if (key === 'ArrowUp' || code === 38) {
+            } else if (key === 'ArrowUp' || code === 38 || code === 1) {
                 e.preventDefault();
                 if (currentIndex - COLS >= 0) setFocus(currentIndex - COLS);
-            } else if (key === 'Enter' || code === 13) {
+            } else if (key === 'Enter' || code === 13 || code === 29443) {
                 e.preventDefault();
                 launchChannel(channels[currentIndex]);
+            }
+        });
+
+        // --- 4. BOUTON "TV" EN BAS À DROITE : INSTALLATION DIRECTE SUR L'ACCUEIL VIDAA ---
+        document.getElementById('installBtn').addEventListener('click', () => {
+            playWiiSound('select');
+            const appUrl = "https://bobyshmurda932.github.io/wii-tv/";
+            const iconUrl = "https://bobyshmurda932.github.io/wii-tv/Google_logo.png";
+
+            if (typeof Hisense_installApp === "function") {
+                Hisense_installApp("wii_tv_launcher", "Wii Menu", iconUrl, iconUrl, appUrl, "store", function(res) {
+                    alert("Wii Menu a été installé sur l'écran d'accueil de ta télé !");
+                });
+            } else {
+                alert("Astuce : Ouvre le menu en haut à droite du navigateur de ta télé et clique sur 'Ajouter à l'écran d'accueil' ou 'Définir comme page d'accueil'.");
             }
         });
     </script>
