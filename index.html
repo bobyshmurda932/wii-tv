@@ -21,7 +21,6 @@
             height: 100vh;
             overflow: hidden;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            /* Fond uni léger pour soulager le processeur de la TV */
             background-color: #e4e9ed;
             display: flex;
             flex-direction: column;
@@ -65,7 +64,6 @@
             outline: none;
         }
 
-        /* Reflet supérieur simplifié sans calcul lourd */
         .channel::before {
             content: "";
             position: absolute;
@@ -79,7 +77,7 @@
             pointer-events: none;
         }
 
-        /* État sélectionné ultra-réactif */
+        /* État sélectionné au pointeur souris ou télécommande */
         .channel.focused,
         .channel:hover,
         .channel:focus {
@@ -115,7 +113,6 @@
             padding: 10px 18px;
         }
 
-        /* Logos principaux sans drop-shadow (gain massif de FPS sur TV) */
         .channel-icon {
             width: 112px;
             height: 112px;
@@ -157,7 +154,6 @@
             margin-bottom: -14px;
         }
 
-        /* Texte sans contour ni boîte autour */
         .channel-label {
             background: transparent;
             border: none;
@@ -193,7 +189,6 @@
             overflow: visible;
         }
 
-        /* Chaînes vides optimisées (sans repeating-gradient lourd) */
         .channel.empty {
             background-color: #d2d9df;
             border-color: #bfc8d0;
@@ -236,8 +231,7 @@
             cursor: pointer;
         }
 
-        .wii-pill-btn:hover,
-        .wii-pill-btn.focused {
+        .wii-pill-btn:hover {
             border-color: var(--wii-blue);
             border-width: 5px;
         }
@@ -271,8 +265,12 @@
     <div class="channels-wrapper">
         <div class="channels-grid" id="grid">
             
-            <!-- 1. YOUTUBE -->
-            <div class="channel active-app focused" tabindex="0" data-index="0" data-url="https://www.youtube.com">
+            <!-- 1. YOUTUBE (App Native TV + Version YouTube TV Lounge) -->
+            <div class="channel active-app focused" tabindex="0" data-index="0"
+                 data-app-name="YouTube"
+                 data-app-id="youtube"
+                 data-deep-link="vnd.youtube://"
+                 data-url="https://www.youtube.com/tv">
                 <div class="channel-bg bg-youtube"></div>
                 <div class="channel-content">
                     <svg class="channel-icon" xmlns="http://www.w3.org/2000/svg" width="112" height="112" viewBox="0 0 24 24" fill="#ffffff">
@@ -283,8 +281,12 @@
                 </div>
             </div>
 
-            <!-- 2. SPOTIFY -->
-            <div class="channel active-app" tabindex="0" data-index="1" data-url="https://open.spotify.com">
+            <!-- 2. SPOTIFY (App Native TV + Web Player) -->
+            <div class="channel active-app" tabindex="0" data-index="1"
+                 data-app-name="Spotify"
+                 data-app-id="spotify"
+                 data-deep-link="spotify://"
+                 data-url="https://open.spotify.com">
                 <div class="channel-bg bg-spotify"></div>
                 <div class="channel-content">
                     <svg class="channel-icon" xmlns="http://www.w3.org/2000/svg" width="112" height="112" viewBox="0 0 24 24" fill="#ffffff">
@@ -295,8 +297,12 @@
                 </div>
             </div>
 
-            <!-- 3. TWITCH -->
-            <div class="channel active-app" tabindex="0" data-index="2" data-url="https://www.twitch.tv">
+            <!-- 3. TWITCH (App Native TV + Web TV) -->
+            <div class="channel active-app" tabindex="0" data-index="2"
+                 data-app-name="Twitch"
+                 data-app-id="twitch"
+                 data-deep-link="twitch://"
+                 data-url="https://www.twitch.tv">
                 <div class="channel-bg bg-twitch"></div>
                 <div class="channel-content">
                     <svg class="channel-icon" xmlns="http://www.w3.org/2000/svg" width="112" height="112" viewBox="0 0 24 24" fill="#ffffff">
@@ -306,8 +312,9 @@
                 </div>
             </div>
 
-            <!-- 4. ANIME-SAMA -->
-            <div class="channel active-app" tabindex="0" data-index="3" data-url="https://anime-sama.to">
+            <!-- 4. ANIME-SAMA (Web Direct) -->
+            <div class="channel active-app" tabindex="0" data-index="3"
+                 data-url="https://anime-sama.to">
                 <div class="channel-bg bg-anime"></div>
                 <div class="channel-content">
                     <img class="channel-icon" src="61pfGOfxjmL.png" alt="Anime-Sama Icon">
@@ -315,8 +322,9 @@
                 </div>
             </div>
 
-            <!-- 5. GOOGLE -->
-            <div class="channel active-app" tabindex="0" data-index="4" data-url="https://www.google.fr">
+            <!-- 5. GOOGLE (Web Direct) -->
+            <div class="channel active-app" tabindex="0" data-index="4"
+                 data-url="https://www.google.fr">
                 <div class="channel-bg bg-google"></div>
                 <div class="channel-content">
                     <img class="channel-icon" src="Google_logo.png" alt="Google Icon">
@@ -324,14 +332,22 @@
                 </div>
             </div>
 
-            <!-- 6. DISNEY+ -->
-            <div class="channel active-app" tabindex="0" data-index="5" data-url="https://www.disneyplus.com">
+            <!-- 6. DISNEY+ (App Native TV + Web) -->
+            <div class="channel active-app" tabindex="0" data-index="5"
+                 data-app-name="Disney+"
+                 data-app-id="disneyplus"
+                 data-deep-link="disneyplus://"
+                 data-url="https://www.disneyplus.com">
                 <div class="channel-bg bg-disney"></div>
                 <img class="disney-img" src="disney.png" alt="Disney+" onerror="if(this.src.endsWith('disney.png')) this.src='disney.jpg';">
             </div>
 
-            <!-- 7. NETFLIX -->
-            <div class="channel active-app" tabindex="0" data-index="6" data-url="https://www.netflix.com">
+            <!-- 7. NETFLIX (App Native TV + Web) -->
+            <div class="channel active-app" tabindex="0" data-index="6"
+                 data-app-name="Netflix"
+                 data-app-id="netflix"
+                 data-deep-link="netflix://"
+                 data-url="https://www.netflix.com">
                 <div class="channel-bg bg-netflix"></div>
                 <div class="channel-content">
                     <svg class="netflix-logo" xmlns="http://www.w3.org/2000/svg" viewBox="-20 -15 600 160" fill="#E50914">
@@ -358,12 +374,12 @@
 
     <!-- BARRE INFÉRIEURE WII -->
     <div class="wii-bottom-bar">
-        <div class="wii-pill-btn" id="wiiBtn">Wii</div>
+        <div class="wii-pill-btn" id="wiiBtn" title="Plein écran">Wii</div>
         <div class="wii-clock-container">
             <div class="wii-time" id="clock">12:00</div>
             <div class="wii-date" id="date">Jeu 29/10</div>
         </div>
-        <div class="wii-pill-btn" id="installBtn" title="Installer sur VIDAA">TV</div>
+        <div class="wii-pill-btn" id="tvBtn" title="Actualiser">TV</div>
     </div>
 
     <script>
@@ -402,7 +418,7 @@
             } catch (e) {}
         }
 
-        // --- 2. HORLOGE LÉGÈRE (Mise à jour toutes les 10s au lieu de 1s pour économiser le CPU TV) ---
+        // --- 2. HORLOGE LÉGÈRE ---
         function updateClock() {
             const now = new Date();
             const hours = String(now.getHours()).padStart(2, '0');
@@ -418,7 +434,7 @@
         setInterval(updateClock, 10000);
         updateClock();
 
-        // --- 3. NAVIGATION TÉLÉCOMMANDE TV & SOURIS ---
+        // --- 3. LANCEUR HYBRIDE : VRAIE APP TV VIDAA OU VERSION WEB TV ---
         const channels = Array.from(document.querySelectorAll('.channel'));
         let currentIndex = 0;
         const COLS = 4;
@@ -428,18 +444,51 @@
             channels[currentIndex].classList.remove('focused');
             currentIndex = index;
             channels[currentIndex].classList.add('focused');
-            channels[currentIndex].focus({ preventScroll: true });
             playWiiSound('hover');
         }
 
         function launchChannel(channelEl) {
-            const url = channelEl.getAttribute('data-url');
-            if (!url) return;
+            const webUrl = channelEl.getAttribute('data-url');
+            const appName = channelEl.getAttribute('data-app-name');
+            const appId = channelEl.getAttribute('data-app-id');
+            const deepLink = channelEl.getAttribute('data-deep-link');
+
+            if (!webUrl) return;
             playWiiSound('select');
             channelEl.classList.add('launching');
+
             setTimeout(() => {
-                window.location.href = url;
-            }, 180);
+                // 1. Tentative via l'API interne Hisense / VIDAA si présente sur le firmware
+                try {
+                    if (appName && typeof Hisense_launchApp === 'function') {
+                        Hisense_launchApp(appName, webUrl);
+                        return;
+                    }
+                    if (appId && typeof Hisense_openApp === 'function') {
+                        Hisense_openApp(appId);
+                        return;
+                    }
+                } catch (err) {}
+
+                // 2. Tentative via Deep Link système (ex: netflix://, youtube://) via iframe invisible
+                if (deepLink) {
+                    const iframe = document.createElement('iframe');
+                    iframe.style.display = 'none';
+                    iframe.src = deepLink;
+                    document.body.appendChild(iframe);
+                    setTimeout(() => {
+                        if (document.body.contains(iframe)) document.body.removeChild(iframe);
+                    }, 1000);
+                }
+
+                // 3. Bascule vers la version TV / Web si la télé n'a pas ouvert l'application au bout de 350ms
+                setTimeout(() => {
+                    channelEl.classList.remove('launching');
+                    if (!document.hidden) {
+                        window.location.href = webUrl;
+                    }
+                }, 350);
+            }, 160);
         }
 
         channels.forEach((ch, idx) => {
@@ -452,7 +501,6 @@
             });
         });
 
-        // Support complet des codes touches télécommande Hisense / VIDAA / CE-HTML
         window.addEventListener('keydown', (e) => {
             const key = e.key;
             const code = e.keyCode || e.which;
@@ -475,19 +523,18 @@
             }
         });
 
-        // --- 4. BOUTON "TV" EN BAS À DROITE : INSTALLATION DIRECTE SUR L'ACCUEIL VIDAA ---
-        document.getElementById('installBtn').addEventListener('click', () => {
+        // Bouton Wii (Gauche) = Basculer en Plein Écran
+        document.getElementById('wiiBtn').addEventListener('click', () => {
             playWiiSound('select');
-            const appUrl = "https://bobyshmurda932.github.io/wii-tv/";
-            const iconUrl = "https://bobyshmurda932.github.io/wii-tv/Google_logo.png";
-
-            if (typeof Hisense_installApp === "function") {
-                Hisense_installApp("wii_tv_launcher", "Wii Menu", iconUrl, iconUrl, appUrl, "store", function(res) {
-                    alert("Wii Menu a été installé sur l'écran d'accueil de ta télé !");
-                });
-            } else {
-                alert("Astuce : Ouvre le menu en haut à droite du navigateur de ta télé et clique sur 'Ajouter à l'écran d'accueil' ou 'Définir comme page d'accueil'.");
+            if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen().catch(() => {});
             }
+        });
+
+        // Bouton TV (Droite) = Rafraîchir le menu
+        document.getElementById('tvBtn').addEventListener('click', () => {
+            playWiiSound('select');
+            window.location.reload();
         });
     </script>
 </body>
